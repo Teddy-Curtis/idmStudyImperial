@@ -1,0 +1,18 @@
+# Ignore these types of files
+*.log
+*.err
+
+
+# In the MadGraph_files folder I don't want to save
+# the madgraph run files, but I do want to include
+# the structure of the directories and the run_script.sh in them
+
+
+# ignore these folders
+MG5_aMC_v2_6_7
+Delphes-3.5.0
+BP*
+
+# And these files
+Delphes-3.5.0.tar.gz
+MG5_aMC_v2.6.7.tar.gz
