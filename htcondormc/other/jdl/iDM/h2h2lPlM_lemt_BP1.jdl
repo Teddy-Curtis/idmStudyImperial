@@ -1,0 +1,25 @@
+
+tag = h2h2lPlM_lemt_BP1
+ncpus = 1
+nevents = 100
+home = /afs/cern.ch/user/e/ecurtis/idmStudy/htcondormc
+gridpack=/afs/cern.ch/user/e/ecurtis/idmStudy/genproductions/bin/MadGraph5_aMCatNLO/h2h2lPlM_lemt_BP1_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+fragment=$(home)/fragments/iDM/original_config.py
+transfer_input_files = $(home)/pulist_fall17.txt
+should_transfer_files = YES
+Executable = $(home)/run_wmLHEGEN_RunIIFall17.sh
+output = $(home)/logging/$(tag)_$(Cluster).out.$(Process)
+error = $(home)/logging/$(tag)_$(Cluster).err.$(Process)
+log = $(home)/logging/$(tag)_$(Cluster).log.$(Process)
+# arguments = $(gridpack) $(fragment) $(nevents) $(ncpus) /afs/cern.ch/user/e/ecurtis/idmStudy/genproductions/bin/MadGraph5_aMCatNLO/$(tag)
+arguments = $(gridpack) $(fragment) $(nevents) $(ncpus) /afs/cern.ch/user/e/ecurtis/idmStudy/genproductions/bin/MadGraph5_aMCatNLO/$(tag)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+Universe = vanilla
+notification = Error
+Initialdir = . 
+getenv = False
+request_cpus = $(ncpus)
++MaxRuntime = 43200
+
+queue 1

@@ -1,0 +1,24 @@
+
+tag = iDM_HHlnu_LO_BP6
+ncpus = 1
+nevents = 100000
+home = /afs/cern.ch/work/a/amagnan/MG5aMCProd/htcondormc
+gridpack=/afs/cern.ch/work/a/amagnan/MG5aMCProd/genproductions/bin/MadGraph5_aMCatNLO/iDM_HHlnu_LO_BP6_slc7_amd64_gcc820_CMSSW_10_6_12_tarball.tar.xz
+fragment=$(home)/fragments/iDM/HHlnu_LO_cfg.py
+transfer_input_files = $(home)/pulist_fall17.txt
+should_transfer_files = YES
+Executable = $(home)/run_wmLHEGEN_RunIIFall17.sh
+output = $(home)/logging/$(tag)_$(Cluster).out.$(Process)
+error = $(home)/logging/$(tag)_$(Cluster).err.$(Process)
+log = $(home)/logging/$(tag)_$(Cluster).log.$(Process)
+arguments = $(gridpack) $(fragment) $(nevents) $(ncpus) /eos/user/a/amagnan/mc/iDM/$(tag)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+Universe = vanilla
+notification = Error
+Initialdir = . 
+getenv = False
+request_cpus = $(ncpus)
++MaxRuntime = 43200
+
+queue $(njobs)

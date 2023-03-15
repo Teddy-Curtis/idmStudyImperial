@@ -11,7 +11,7 @@
 # ignore these folders
 MG5_aMC_v2_6_7
 Delphes-3.5.0
-BP*
+**/logging
 
 # And these files
 Delphes-3.5.0.tar.gz

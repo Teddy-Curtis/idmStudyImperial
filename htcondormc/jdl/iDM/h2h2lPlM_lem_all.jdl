@@ -1,0 +1,32 @@
+run_name=h2h2lPlM_lem
+tag = $(run_name)_BP$(item)
+
+gridpack=/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/$(run_name)/$(tag)/$(tag)_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+
+output_folder=/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/$(run_name)/$(tag)
+
+ncpus = 1
+nevents = 10000
+home = /afs/cern.ch/user/e/ecurtis/idmStudy/htcondormc
+
+fragment=$(home)/fragments/iDM/general_config.py
+transfer_input_files = $(home)/pulist_fall17.txt
+should_transfer_files = YES
+Executable = $(home)/run_RunIIFall17_changedCMSSW_AODSIMGEN.sh
+output = $(home)/logging/$(tag).out
+error = $(home)/logging/$(tag).err
+log = $(home)/logging/$(tag).log
+
+
+arguments = $(gridpack) $(fragment) $(nevents) $(ncpus) $(output_folder)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+Universe = vanilla
+notification = Error
+Initialdir = . 
+getenv = False
+request_cpus = $(ncpus)
++JobFlavour = "workday"
+
+queue from seq 21 40 |

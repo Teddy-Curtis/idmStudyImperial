@@ -1,0 +1,38 @@
+# This file creates all of the gridpacks, then sends them over the the myFiles
+# directory on EOS
+# Name of the process:
+tag = h2h2lPlM_lem
+
+#scram_version=slc7_amd64_gcc700
+#CMSSW_version=CMSSW_10_6_27
+#CMSSW_version=CMSSW_10_6_19
+ncpus = 1
+
+# These define the arguments for input
+home = /afs/cern.ch/user/e/ecurtis/idmStudy/condor_test
+run_name=$(tag)_BP$(BP)_lam$(lam2)
+run_folder=cards/idmScan/$(tag)/$(run_name)
+
+Executable = $(home)/gridpack_generation.sh
+
+output = $(home)/logging/$(tag)_$(BP)_lam$(lam2).out
+error = $(home)/logging/$(tag)_$(BP)_lam$(lam2).err
+log = $(home)/logging/$(tag)_$(BP)_lam$(lam2).log
+
+
+#arguments = $(run_name) $(run_folder) local ALL $(scram_version) $(CMSSW_version)
+arguments = $(run_name) $(run_folder)
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+Universe = vanilla
+Initialdir = .
+getenv = False
+request_cpus = $(ncpus)
+#+MaxRuntime = 43200
++JobFlavour = "workday"
+
+queue BP, lam2 from(
+    10, 4
+)
+

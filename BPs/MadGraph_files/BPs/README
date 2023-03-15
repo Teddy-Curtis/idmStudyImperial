@@ -1,0 +1,20 @@
+This folder goes over getting the correct benchmark points, with the correct widths 
+and branching ratios etc.
+To make it easier to keep the files neat, this is separate to the MadGraph installation,
+but it does use MadGraph to find the correct widths. 
+This is done using the following steps:
+
+1. First I create the param cards for each BP, this includes the correct masses for each point,
+    the correct coupling constants.
+2. Next I use the "compute_widths" function in madgraph to get the widths for the h3 particle. 
+    Note that h3 = A0 = ~A0, for some reason the notation that madgraph uses here is ~A0. This
+    then overwrites the param card for that BP, and updates only the width and the branching 
+    ratios for the ~A0 particle.
+3. This is then repeated for the h+ = H+ = ~H+ particle. Now all the param cards are set. 
+
+Whilst all the parameter cards are set, it is also useful to get them in a different format:
+    The "set ..." format. This is done for inputting into genproductions. 
+
+Order of files to run:
+1. Use setTemplateParameters.py file to do this
+2 + 3. To do these steps use getWidths.py 
