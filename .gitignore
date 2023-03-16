@@ -14,6 +14,7 @@ Delphes-3.5.0
 **/logging
 genproductions
 myFiles
+**/CMSSW*
 
 # And these files
 Delphes-3.5.0.tar.gz

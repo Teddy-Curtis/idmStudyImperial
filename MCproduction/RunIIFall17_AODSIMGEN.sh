@@ -5,7 +5,7 @@ if (( "$#" != "5" ))
     then
     echo $# $*
     echo "Input parameter needed: <gridpack> <fragment> <nevts> <nthreads> <outpath>"
-    echo "./run_wmNANOAODGEN_RunIIFall17_changedCMSSW.sh "
+    echo "./RunIIFall17_AODSIMGEN.sh "
     exit
 fi
 
@@ -38,7 +38,7 @@ scram b
 cd ../../
 seed=$(date +%s)
 cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
---fileout file:wmNANOAODGEN_new_conditions.root \
+--fileout file:mc_NANOAODGEN.root \
 --mc \
 --eventcontent NANOAODGEN \
 --datatier NANOAOD \
@@ -48,14 +48,14 @@ cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
 --nThreads ${NTHREADS} \
 --geometry DB:Extended \
 --era Run2_2017,run2_nanoAOD_106Xv2 \
---python_filename wmNANOAODGEN_new_conditions.py \
+--python_filename mc_NANOAODGEN.py \
 --no_exec \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --customise_commands="process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))" \
 -n ${NEVENTS} || exit $? ; 
 
 
-cmsRun wmNANOAODGEN_new_conditions.py | tee log_wmNANOAODGEN_new_conditions.txt
+cmsRun mc_NANOAODGEN.py | tee log_mc_NANOAODGEN.txt
 
 OUTTAG=$(echo $JOBFEATURES | sed "s|_[0-9]*$||;s|.*_||")
 
