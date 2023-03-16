@@ -20,12 +20,12 @@ OUTPATH=${!i}; i=$((i+1))
 #!/bin/bash
 export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-if [ -r CMSSW_10_6_19_patch2/src ] ; then 
- echo release CMSSW_10_6_19_patch2 already exists
+if [ -r CMSSW_10_6_27/src ] ; then 
+ echo release CMSSW_10_6_27 already exists
 else
-scram p CMSSW CMSSW_10_6_19_patch2
+scram p CMSSW CMSSW_10_6_27
 fi
-cd CMSSW_10_6_19_patch2/src
+cd CMSSW_10_6_27/src
 eval `scram runtime -sh`
 
 mkdir -p Configuration/GenProduction/python/
@@ -42,12 +42,12 @@ cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
 --mc \
 --eventcontent NANOAODGEN \
 --datatier NANOAOD \
---conditions 102X_mc2017_realistic_v8 \
+--conditions 106X_mc2017_realistic_v9 \
 --beamspot Realistic25ns13TeVEarly2017Collision \
 --step LHE,GEN,NANOGEN \
 --nThreads ${NTHREADS} \
 --geometry DB:Extended \
---era Run2_2017,run2_nanoAOD_106Xv1 \
+--era Run2_2017,run2_nanoAOD_106Xv2 \
 --python_filename wmNANOAODGEN_new_conditions.py \
 --no_exec \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
