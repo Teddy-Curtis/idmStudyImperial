@@ -1,5 +1,5 @@
 #!/bin/bash
-#$-q hep.q -l h_rt=4:0:0 -cwd
+#$-q hep.q -l h_rt=4:0:0 -e /vols/cms/emc21/idmStudy/gridpack_batch/logging/ -o /vols/cms/emc21/idmStudy/gridpack_batch/logging/
 BPNUM=$1
 CMSSW_version="CMSSW_10_6_27"
 scram_version="slc7_amd64_gcc700"
