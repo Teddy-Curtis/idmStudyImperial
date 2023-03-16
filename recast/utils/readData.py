@@ -79,7 +79,7 @@ def getIDMdata(BP, process_name):
 
 
 def get2HDMaEvents(filenames):
-    filters = ['GenDressedLepton*', 'GenPart*']
+    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
     events = openFile(filenames, filters)
     return events
 
@@ -92,6 +92,6 @@ def getIDMevents(BP, process_name):
 
     # I want to take the latest bit of data so revserse sort and take the first value
     filename = sorted(files, reverse=True)[0] + ':Events;1'
-    filters = ['GenDressedLepton*', 'GenPart*']
+    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
     events = openFile(filename, filters)
     return events
