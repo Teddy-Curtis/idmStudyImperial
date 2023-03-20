@@ -19,10 +19,6 @@ process_name = 'h2h2lPlM_lem'
 mH = int(sys.argv[1])
 mA = int(sys.argv[2])
 print(f'mH = {mH}, mA = {mA}')
-with open("2HDMa_files.pkl", 'rb') as f:
-    filenames = pickle.load(f)
-filenames = filenames[f'mH{mH}_mA{mA}']
-print(filenames)
 
 os.environ["X509_USER_PROXY"] = "/afs/cern.ch/user/e/ecurtis/cms.proxy"
 print(os.environ["X509_USER_PROXY"]) 
@@ -290,7 +286,7 @@ def plotLeptonDeltaR(leptons, lep_idm, params):
 
 
 lumi = 137
-events_2HDMa = get2HDMaEvents(filenames)
+events_2HDMa = get2HDMaEvents(mH, mA)
 scaler_2HDMa = scale2HDMa(len(events_2HDMa), lumi)
 print(f'Applying cuts to 2hdma events:')
 cut_events_2HDMa = applyCuts(events_2HDMa, dm_pdgId=52)
