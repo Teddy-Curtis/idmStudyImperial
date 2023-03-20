@@ -5,7 +5,7 @@ if (( "$#" != "5" ))
     then
     echo $# $*
     echo "Input parameter needed: <gridpack> <fragment> <nevts> <nthreads> <outpath>"
-    echo "./RunIIFall17_AODSIMGEN.sh "
+    echo "./run_wmNANOAODGEN_RunIIFall17_changedCMSSW.sh "
     exit
 fi
 
@@ -16,6 +16,21 @@ FRAGMENT=${!i}; i=$((i+1))
 NEVENTS=${!i}; i=$((i+1))
 NTHREADS=${!i}; i=$((i+1))
 OUTPATH=${!i}; i=$((i+1))
+
+# This runs differently on lx02 batch than it does on condor. On condor it 
+# runs on a separate machine so when it creates a CMSSW env it is on that machine
+# and it goes when the program stops. Whereas on lx02, it runs in the directory 
+# so the CMSSW folder: 1. doesn't go, 2. If I run multiple qsub at a time then 
+# they all use the same folders and it breaks.
+CURRENT_DIR=`pwd`
+echo ${CURRENT_DIR}
+if [ "${CURRENT_DIR:0:5}" = "/vols" ]; then
+    echo "On Imperial servers therefore changing the batch directory to $OUTPATH"
+    cd $OUTPATH
+else
+    echo "Running on CERN servers, therefore not changing directory from the condor machine"
+fi
+
 
 #!/bin/bash
 export SCRAM_ARCH=slc7_amd64_gcc700
@@ -36,7 +51,7 @@ sed -i "s!@GRIDPACK!${GRIDPACK}!" Configuration/GenProduction/python/$(basename 
 
 scram b
 cd ../../
-seed=$(date +%s)
+seed=$(date +%s%N)
 cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
 --fileout file:mc_NANOAODGEN.root \
 --mc \
@@ -72,3 +87,11 @@ done
 for file in *.txt; do 
     mv $file $OUTPATH/$(echo $file | sed "s|.root|_${OUTTAG}.txt|g")
 done
+
+# Now delete the CMSSW folder to save space
+if [ "${CURRENT_DIR:0:5}" = "/vols" ]; then
+    echo "On Imperial servers therefore deleting the CMSSW folder"
+    rm -rf CMSSW_10_6_27
+else
+    echo "Running on CERN servers, therefore don't need to delete the CMSSW folder"
+fi
