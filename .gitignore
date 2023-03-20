@@ -1,6 +1,7 @@
 # Ignore these types of files
 *.log
 *.err
+*.pyc
 
 
 # In the MadGraph_files folder I don't want to save
