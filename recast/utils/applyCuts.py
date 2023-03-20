@@ -200,6 +200,30 @@ def jetPT(jets, return_vec = False):
     else:
         return jet_vec_abs
     
+
+def cutNjets(events, njets):
+    print('cutNjets:')
+    jets = getJets(events)
+    # Want to split into two categories: 0 jet > 30GeV
+    # and 1 jet > 30 GeV, for jet |eta|<4.7
+    jet_pt = jets.GenJet_pt
+    pt_mask = jet_pt > 30
+    jet_eta = jets.GenJet_eta
+    eta_mask = abs(jet_eta) < 4.7
+    # As I need both criteria satisfied, I can times
+    # them together, and only elements that equal True
+    # are jets with pt>30 and |eta|<4.7
+    mask = pt_mask * eta_mask
+    # This finds how many jets in an event are over 30 GeV
+    num_over_30 = ak.sum(mask, axis=1)
+    # Get the indexes for events with n jets 
+    # that have over 30 GeV
+    n_jets_idxs = np.argwhere(num_over_30 == njets)
+    print(f'Percentage of events taken out = {((len(mask) - len(n_jets_idxs)) / len(mask)) * 100:.2f}')
+    events = events[n_jets_idxs]
+    return events
+
+
 def cutDeltaPhiPTjetPTmiss(events, dm_pdgId):
     print(f'cutDeltaPhiPTjetPTmiss:')
     dm = getDM(events, dm_pdgId)
@@ -217,13 +241,13 @@ def cutDeltaPhiPTjetPTmiss(events, dm_pdgId):
     return events
 
 
-def applyCuts(events, dm_pdgId):
+def applyCuts(events, dm_pdgId, njets):
     # Here cuts is a dictionary with all the specified cuts
+    events = cutNjets(events, njets)
     events = cutNleptons(events)
-    events = cutDeltaPhiPTjetPTmiss(events)
+    events = cutDeltaPhiPTjetPTmiss(events, dm_pdgId)
     events = cutLeadingSubleadingLeptonPT(events)
     events = cutDilepton_mass(events)
-    # Do the jet stuff here
     events = cutDileptonPT(events)
     events = cutDeltaPhiPTllPTmiss(events, dm_pdgId)
     events = cutBalanceRatio(events, dm_pdgId)
