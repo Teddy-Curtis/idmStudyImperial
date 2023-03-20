@@ -15,5 +15,6 @@ ulimit -s unlimited
 source ~/.bashrc
 cd /vols/cms/emc21/idmStudy/MCproduction
 
-./RunIIFall17_AODSIMGEN.sh ${gridpack} ${fragment} ${nevents} ${ncpus} ${output_folder}
+
+/vols/cms/emc21/idmStudy/MCproduction/RunIIFall17_AODSIMGEN.sh ${gridpack} ${fragment} ${nevents} ${ncpus} ${output_folder}
 # for BP in 8 10 12 13 14 18 19 20 21 24; do qsub qsub_h2h2lPlM_lem.sh $BP; done
