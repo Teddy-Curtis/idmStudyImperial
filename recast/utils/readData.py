@@ -2,7 +2,9 @@
 import time
 import uproot
 import glob
-import awkward as ak 
+import awkward as ak
+import pickle
+import os
 
 def openFile(filenames, filters):
     options = {'timeout' : 240}
@@ -19,6 +21,42 @@ def openFile(filenames, filters):
     print('Failed to open file')
 
 
+
+# These next two functions are the main data reading functions
+def get2HDMaEvents(mH, mA):
+    with open("utils/2HDMa_files.pkl", 'rb') as f:
+        filenames = pickle.load(f)
+    filenames = filenames[f'mH{mH}_mA{mA}']
+    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
+    events = openFile(filenames, filters)
+    return events
+
+def getIDMevents(BP, process_name):
+    run_name = f'{process_name}_BP{BP}'
+    # I need to check if running on lxplus or on lx02
+    cwd = os.getcwd()
+    if cwd[:5] == '/vols':
+        file_prefix = '/vols/cms/emc21/idmStudy'
+    else:
+        file_prefix = '/eos/user/e/ecurtis/idmStudy'
+    
+    files = glob.glob(f'{file_prefix}/myFiles/gridpacks/{process_name}/{run_name}/mc_NANOAODGEN*.root')
+
+    # files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmLHEGEN*.root')
+    # files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmNANOAODGEN_new_conditions*.root')
+    # if len(files) == 0:
+    #     files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmNANOAODGEN*.root')
+
+    # I want to take the latest bit of data so revserse sort and take the first value
+    filename = sorted(files, reverse=True)[0] + ':Events;1'
+    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
+    events = openFile(filename, filters)
+    return events
+
+
+
+
+# These next two functions are outdated, but kept anyway
 def get2HDMaData(filenames):
     filters = ['GenDressedLepton*', 'GenPart*']
     events = openFile(filenames, filters)
@@ -78,20 +116,3 @@ def getIDMdata(BP, process_name):
     return leptons, dm
 
 
-def get2HDMaEvents(filenames):
-    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
-    events = openFile(filenames, filters)
-    return events
-
-def getIDMevents(BP, process_name):
-    run_name = f'{process_name}_BP{BP}'
-    #files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmLHEGEN*.root')
-    files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmNANOAODGEN_new_conditions*.root')
-    if len(files) == 0:
-        files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmNANOAODGEN*.root')
-
-    # I want to take the latest bit of data so revserse sort and take the first value
-    filename = sorted(files, reverse=True)[0] + ':Events;1'
-    filters = ['GenDressedLepton*', 'GenPart*', 'GenJet*']
-    events = openFile(filename, filters)
-    return events
