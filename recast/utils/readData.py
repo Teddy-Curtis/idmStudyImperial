@@ -31,7 +31,7 @@ def get2HDMaEvents(mH, mA):
     events = openFile(filenames, filters)
     return events
 
-def getIDMevents(BP, process_name):
+def getIDMevents(BP, process_name, CMSSW_version="CMSSW_10_6_27"):
     run_name = f'{process_name}_BP{BP}'
     # I need to check if running on lxplus or on lx02
     cwd = os.getcwd()
@@ -40,7 +40,7 @@ def getIDMevents(BP, process_name):
     else:
         file_prefix = '/eos/user/e/ecurtis/idmStudy'
     
-    files = glob.glob(f'{file_prefix}/myFiles/gridpacks/{process_name}/{run_name}/mc_NANOAODGEN*.root')
+    files = glob.glob(f'{file_prefix}/myFiles/gridpacks/{process_name}_{CMSSW_version}/{run_name}/mc_NANOAODGEN*.root')
 
     # files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmLHEGEN*.root')
     # files = glob.glob(f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/wmNANOAODGEN_new_conditions*.root')
