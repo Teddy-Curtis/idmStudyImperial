@@ -16,16 +16,16 @@ from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
 
 generator = cms.EDFilter("Pythia8HadronizerFilter",
     maxEventsToPrint = cms.untracked.int32(1),
-    pythiaPylistVerbosity = cms.untracked.int32(3), # was set to 1 before 
+    pythiaPylistVerbosity = cms.untracked.int32(1), # was set to 1 before 
     filterEfficiency = cms.untracked.double(1.0),
-    pythiaHepMCVerbosity = cms.untracked.bool(True), # This was set to False before 
+    pythiaHepMCVerbosity = cms.untracked.bool(False), # This was set to False before 
     comEnergy = cms.double(13000.),
     PythiaParameters = cms.PSet(
         pythia8CommonSettingsBlock,
         pythia8CP5SettingsBlock,
         processParameters=cms.vstring(
             'SLHA:minMassSM = 50.0',
-            'SLHA:verbose = 3'
+            'SLHA:verbose = 1'
         ),
         parameterSets = cms.vstring('pythia8CommonSettings',
                                     'pythia8CP5Settings',
