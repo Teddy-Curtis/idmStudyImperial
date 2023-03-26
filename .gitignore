@@ -16,6 +16,8 @@ Delphes-3.5.0
 genproductions
 myFiles
 **/CMSSW*
+recast/plots
+HiggsDNA
 
 # And these files
 Delphes-3.5.0.tar.gz
