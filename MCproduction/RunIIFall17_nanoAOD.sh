@@ -1,6 +1,9 @@
 #!/bin/bash
 start=`date +%s`
 
+SEED=${JOB_ID}
+echo "The seed for this job is: " ${SEED}
+
 if (( "$#" != "5" ))
     then
     echo $# $*
@@ -28,7 +31,6 @@ export X509_USER_PROXY=/home/hep/emc21/cms.proxy
 # so the CMSSW folder: 1. doesn't go, 2. If I run multiple qsub at a time then 
 # they all use the same folders and it breaks.
 CURRENT_DIR=`pwd`
-echo ${CURRENT_DIR}
 if [ "${CURRENT_DIR:0:5}" = "/vols" ]; then
     echo "On Imperial servers therefore changing the batch directory to $OUTPATH"
     cd $OUTPATH
@@ -38,7 +40,8 @@ fi
 
 # --------------------------------------------LHE, GEN------------------------------------------------------
 #!/bin/bash
-
+# For this first step, as I need to save the fragment WITHIN CMSSW_10_6_19, then build it,
+# I will have a CMSSW_10_6_19 for each BP, but will delete it after I use it to save space 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_10_6_19/src ] ; then
   echo release CMSSW_10_6_19 already exists
@@ -47,41 +50,46 @@ else
 fi
 cd CMSSW_10_6_19/src
 eval `scram runtime -sh`
-scram b
-cd ../../
-SEED=$(date +%s)
 
 mkdir -p Configuration/GenProduction/python/
 cp ${FRAGMENT}  Configuration/GenProduction/python/
+# This goes into the fragment, and changes all occurances of @GRIDPACK with 
+# the location of the correct gridpack
 sed -i "s!@GRIDPACK!${GRIDPACK}!" Configuration/GenProduction/python/$(basename $FRAGMENT)
 
 [ -s Configuration/GenProduction/python/$(basename $FRAGMENT) ] || exit $?;
 
+scram b
+cd ../../
 
 
-#cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) --python_filename LHE-GEN-SIM_cfg.py --eventcontent RAWSIM,LHE --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --fileout file:LHE-GEN-SIM.root --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${SEED})"\\nprocess.source.numberEventsInLuminosityBlock="cms.untracked.uint32(100)" --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --no_exec --mc -n $NEVENTS || exit $? ;
 cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
---python_filename LHE-GEN_cfg.py \
+--python_filename LHE-GEN_cfg_${SEED}.py \
 --eventcontent RAWSIM,LHE \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier GEN,LHE \
---fileout file:LHE-GEN.root \
+--fileout file:LHE-GEN_${SEED}.root \
 --conditions 106X_mc2017_realistic_v6 \
 --beamspot Realistic25ns13TeVEarly2017Collision \
 --step LHE,GEN \
 --geometry DB:Extended \
 --era Run2_2017 \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
+--customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${SEED})" \
 -n $NEVENTS || exit $? ;
 
+cmsRun LHE-GEN_cfg_${SEED}.py 
 
+# I can now delete the CMSSW install in this BP, but first I want to copy over the fragment for if I need it later
+cp $FRAGMENT .
+# Now delete the CMSSW version
+#rm -rf CMSSW_10_6_19
 
-cmsRun LHE-GEN_cfg.py | tee LHE-GEN_log.txt
-
-echo "Files in dir are"
-ls
 # --------------------------------------------PREMIX data------------------------------------------------------
+# Make these in the directory above so that I don't need to make a CMSSW for each BP
+cd ..
 if [ -r CMSSW_10_6_17_patch1/src ] ; then
   echo release CMSSW_10_6_17_patch1 already exists
 else
@@ -90,29 +98,11 @@ fi
 cd CMSSW_10_6_17_patch1/src
 eval `scram runtime -sh`
 scram b
-cd ../../
+cd $OUTPATH
 
-# cmsDriver.py  --python_filename SIM_cfg.py \
-# --filein file:LHE-GEN.root \
-# --fileout file:SIM.root \
-# --eventcontent RAWSIM \
-# --customise Configuration/DataProcessing/Utils.addMonitoring \
-# --datatier GEN-SIM \
-# --conditions 106X_mc2017_realistic_v6 \
-# --beamspot Realistic25ns13TeVEarly2017Collision \
-# --step SIM \
-# --geometry DB:Extended \
-# --era Run2_2017 \
-# --runUnscheduled \
-# --no_exec \
-# --mc \
-# -n $NEVENTS || exit $? ;
-
-# cmsRun SIM_cfg.py | tee SIM_log.txt
-
-cmsDriver.py  --python_filename PREMIX_cfg.py \
---filein file:LHE-GEN.root \
---fileout file:PREMIX.root \
+cmsDriver.py  --python_filename PREMIX_cfg_${SEED}.py \
+--filein file:LHE-GEN_${SEED}.root \
+--fileout file:PREMIX_${SEED}.root \
 --step SIM,DIGI,DATAMIX,L1,DIGI2RAW \
 --eventcontent PREMIXRAW \
 --conditions 106X_mc2017_realistic_v6 \
@@ -125,12 +115,18 @@ cmsDriver.py  --python_filename PREMIX_cfg.py \
 --geometry DB:Extended \
 --era Run2_2017 \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
-cmsRun PREMIX_cfg.py | tee PREMIX_log.txt
+cmsRun PREMIX_cfg_${SEED}.py
+
+# Now that I've used LHE-GEN I can get rid of that file
+rm LHE-GEN_${SEED}.root
+rm LHE-GEN_${SEED}_inLHE.root
 
 # # --------------------------------------------PREMIX+HLT data------------------------------------------------------
+cd ..
 if [ -r CMSSW_9_4_14_UL_patch1/src ] ; then
   echo release CMSSW_9_4_14_UL_patch1 already exists
 else
@@ -139,11 +135,11 @@ fi
 cd CMSSW_9_4_14_UL_patch1/src
 eval `scram runtime -sh`
 scram b
-cd ../../
+cd $OUTPATH
 
-cmsDriver.py  --python_filename HLT_cfg.py \
---filein file:PREMIX.root \
---fileout file:HLT.root \
+cmsDriver.py  --python_filename HLT_cfg_${SEED}.py \
+--filein file:PREMIX_${SEED}.root \
+--fileout file:HLT_${SEED}.root \
 --eventcontent RAWSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier GEN-SIM-RAW \
@@ -153,12 +149,17 @@ cmsDriver.py  --python_filename HLT_cfg.py \
 --geometry DB:Extended \
 --era Run2_2017 \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
-cmsRun HLT_cfg.py | tee HLT_log.txt
+cmsRun HLT_cfg_${SEED}.py 
+
+# Now that I've used PREMIX I can get rid of that file
+rm PREMIX_${SEED}.root
 
 # # --------------------------------------------AOD------------------------------------------------------
+cd ..
 if [ -r CMSSW_10_6_17_patch1/src ] ; then
   echo release CMSSW_10_6_17_patch1 already exists
 else
@@ -167,11 +168,11 @@ fi
 cd CMSSW_10_6_17_patch1/src
 eval `scram runtime -sh`
 scram b
-cd ../../
+cd $OUTPATH
 
-cmsDriver.py  --python_filename AOD_cfg.py \
---filein file:HLT.root \
---fileout file:AOD.root \
+cmsDriver.py  --python_filename AOD_cfg_${SEED}.py \
+--filein file:HLT_${SEED}.root \
+--fileout file:AOD_${SEED}.root \
 --eventcontent AODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier AODSIM \
@@ -181,12 +182,17 @@ cmsDriver.py  --python_filename AOD_cfg.py \
 --era Run2_2017 \
 --runUnscheduled \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
-cmsRun AOD_cfg.py | tee AOD_log.txt
+cmsRun AOD_cfg_${SEED}.py 
+
+# Now that I've used HLT I can get rid of that file
+rm HLT_${SEED}.root
 
 # # --------------------------------------------miniAOD------------------------------------------------------
+cd ..
 if [ -r CMSSW_10_6_20/src ] ; then
   echo release CMSSW_10_6_20 already exists
 else
@@ -195,15 +201,15 @@ fi
 cd CMSSW_10_6_20/src
 eval `scram runtime -sh`
 scram b
-cd ../../
+cd $OUTPATH
 
-cmsDriver.py  --python_filename miniAOD_cfg.py \
---filein file:AOD.root \
---fileout file:miniAOD.root \
+cmsDriver.py  --python_filename miniAOD_cfg_${SEED}.py \
+--filein file:AOD_${SEED}.root \
+--fileout file:miniAOD_${SEED}.root \
 --eventcontent MINIAODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier MINIAODSIM \
---fileout file:miniAOD.root \
+--fileout file:miniAOD_${SEED}.root \
 --conditions 106X_mc2017_realistic_v9 \
 --step PAT \
 --procModifiers run2_miniAOD_UL \
@@ -211,12 +217,17 @@ cmsDriver.py  --python_filename miniAOD_cfg.py \
 --era Run2_2017 \
 --runUnscheduled \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
-cmsRun miniAOD_cfg.py | tee miniAOD_log.txt
+cmsRun miniAOD_cfg_${SEED}.py 
+
+# Now that I've used AOD I can get rid of that file
+rm AOD_${SEED}.root
 
 # # --------------------------------------------nanoAOD------------------------------------------------------
+cd ..
 if [ -r CMSSW_10_6_26/src ] ; then
   echo release CMSSW_10_6_26 already exists
 else
@@ -225,11 +236,11 @@ fi
 cd CMSSW_10_6_26/src
 eval `scram runtime -sh`
 scram b
-cd ../../
+cd $OUTPATH
 
-cmsDriver.py  --python_filename nanoAOD_cfg.py \
---filein file:miniAOD.root \
---fileout file:nanoAOD.root \
+cmsDriver.py  --python_filename nanoAOD_cfg_${SEED}.py \
+--filein file:miniAOD_${SEED}.root \
+--fileout file:nanoAOD_${SEED}.root \
 --eventcontent NANOEDMAODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier NANOAODSIM \
@@ -237,11 +248,25 @@ cmsDriver.py  --python_filename nanoAOD_cfg.py \
 --step NANO \
 --era Run2_2017,run2_nanoAOD_106Xv2 \
 --no_exec \
+--nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
-cmsRun nanoAOD_cfg.py | tee nanoAOD_log.txt
+cmsRun nanoAOD_cfg_${SEED}.py 
 
+
+# Move the log and error files over to the directory, as well as a copy of the shell script used to make it 
+mkdir fall17Data
+mv miniAOD_${SEED}.root fall17Data/.
+mv nanoAOD_${SEED}.root fall17Data/.
+mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_nanoAODproduction.sh.e${JOB_ID} fall17Data/.
+mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_nanoAODproduction.sh.o${JOB_ID} fall17Data/.
+mv LHE-GEN_cfg_${JOB_ID}.py fall17Data/.
+mv PREMIX_cfg_${JOB_ID}.py fall17Data/.
+mv HLT_cfg_${JOB_ID}.py fall17Data/.
+mv AOD_cfg_${JOB_ID}.py fall17Data/.
+mv miniAOD_cfg_${JOB_ID}.py fall17Data/.
+mv nanoAOD_cfg_${JOB_ID}.py fall17Data/.
 
 end=`date +%s`
 
