@@ -241,7 +241,7 @@ cd $OUTPATH
 cmsDriver.py  --python_filename nanoAOD_cfg_${SEED}.py \
 --filein file:miniAOD_${SEED}.root \
 --fileout file:nanoAOD_${SEED}.root \
---eventcontent NANOEDMAODSIM \
+--eventcontent NANOAODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier NANOAODSIM \
 --conditions 106X_mc2017_realistic_v9 \
