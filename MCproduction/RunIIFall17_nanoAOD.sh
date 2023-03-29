@@ -256,7 +256,7 @@ cmsRun nanoAOD_cfg_${SEED}.py
 
 
 # Move the log and error files over to the directory, as well as a copy of the shell script used to make it 
-mkdir fall17Data
+mkdir -p fall17Data
 mv miniAOD_${SEED}.root fall17Data/.
 mv nanoAOD_${SEED}.root fall17Data/.
 mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_nanoAODproduction.sh.e${JOB_ID} fall17Data/.
