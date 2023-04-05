@@ -86,7 +86,7 @@ def plotLeptonInvMass(leptons, lep_idm, params):
     plt.title(f"Lepton inv M: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('Invariant Mass (GeV)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_leptonInvMass.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_leptonInvMass.png")
     plt.clf()
 
 
@@ -118,7 +118,7 @@ def plotLeptonPTabs(leptons, lep_idm, params):
     plt.title(f"Dilepton PT: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('PT (GeV)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_dileptonPT.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_dileptonPT.png")
     plt.clf()
 
 
@@ -148,7 +148,7 @@ def plotPTmiss(dm, dm_idm, params):
     plt.title(f"PT_miss: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('PT (GeV)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_PTmiss.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_PTmiss.png")
     plt.clf()
 
 def unit_vector(vector):
@@ -198,7 +198,7 @@ def plotTransverseMass(leptons, dm, lep_idm, dm_idm, params):
     plt.title(f"Transverse Mass: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('Transverse Mass (GeV)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_MT.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_MT.png")
     plt.clf()
 
 
@@ -229,7 +229,7 @@ def plotDeltaPhi_PTll_PTmiss(leptons, dm, lep_idm, dm_idm, params):
     plt.title(f"DeltaPhi between PT_ll and PT_miss: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('Delta Phi (Rad)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_deltaPhi_PTll_PTmiss.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_deltaPhi_PTll_PTmiss.png")
     plt.clf()
 
 def balanceRatio(leptons, dm):
@@ -253,7 +253,7 @@ def plotBalanceRatio(leptons, dm, lep_idm, dm_idm, params):
     plt.title(f"Balance Ratio: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('Balance Ratio')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_balance_ratio.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_balance_ratio.png")
     plt.clf()
 
 def leptonDeltaR(leptons):
@@ -278,7 +278,7 @@ def plotLeptonDeltaR(leptons, lep_idm, params):
     plt.title(f"Lepton DeltaR: mH={params['mH']}, mA={params['mA']}, BP={params['BP']}, Lumi=137fb^-1", fontsize=10)
     plt.xlabel('Delta R (Rad)')
     plt.ylabel('Count')
-    plt.savefig(f"/eos/user/e/ecurtis/idmStudy/recast/plots/idmVs2HDMaCutsNewConditionsJets/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_lepton_deltaR.png")
+    plt.savefig(f"/vols/cms/emc21/idmStudy/recast/plots/idmVs2hdma/idm_v_2HDMa_mH{params['mH']}_mA{params['mA']}_BP{params['BP']}_lepton_deltaR.png")
     plt.clf()
 
 
