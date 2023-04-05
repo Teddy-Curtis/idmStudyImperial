@@ -53,6 +53,20 @@ def getIDMevents(BP, process_name, CMSSW_version="CMSSW_10_6_27"):
     events = openFile(filename, filters)
     return events
 
+def getIDMnanoEvents(BP, process_name, filters=['Electron*', 'Muon*', 'nJet', 'MET*', 'Jet*'], CMSSW_version="CMSSW_10_6_19"):
+    run_name = f'{process_name}_BP{BP}'
+    # I need to check if running on lxplus or on lx02
+    cwd = os.getcwd()
+    if cwd[:5] == '/vols':
+        file_prefix = '/vols/cms/emc21/idmStudy'
+    else:
+        file_prefix = '/eos/user/e/ecurtis/idmStudy'
+    
+    files = glob.glob(f'{file_prefix}/myFiles/gridpacks/{process_name}_{CMSSW_version}/{run_name}/fall17Data/nanoAOD*.root')
+   
+    filenames = [file + ':Events;1' for file in files]
+    events = openFile(filenames, filters)
+    return events
 
 
 
