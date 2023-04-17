@@ -3,6 +3,7 @@
 *.err
 *.pyc
 
+MCproduction/testFiles.ipynb
 
 # In the MadGraph_files folder I don't want to save
 # the madgraph run files, but I do want to include
