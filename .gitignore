@@ -19,6 +19,8 @@ myFiles
 **/CMSSW*
 recast/plots
 HiggsDNA
+HiggsDNA2
+higgsInvsPaper
 
 # And these files
 Delphes-3.5.0.tar.gz
