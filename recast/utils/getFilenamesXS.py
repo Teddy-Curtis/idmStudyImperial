@@ -46,6 +46,6 @@ for BP in idm_on_shell:
 
 print(my_dict)
 
-with open("IDM_XS.txt", "w") as fp:
-    json.dump(my_dict, fp)  # encode dict into JSON
+with open("IDM_XS.json", "w") as fp:
+    json.dump(my_dict, fp, indent=4)  # encode dict into JSON
 
