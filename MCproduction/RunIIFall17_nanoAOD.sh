@@ -8,7 +8,7 @@ if (( "$#" != "5" ))
     then
     echo $# $*
     echo "Input parameter needed: <gridpack> <fragment> <nevts> <nthreads> <outpath>"
-    echo "./run_wmNANOAODGEN_RunIIFall17_changedCMSSW.sh "
+    echo "./RunIIFall17_nanoAOD.sh "
     exit
 fi
 
@@ -259,8 +259,8 @@ cmsRun nanoAOD_cfg_${SEED}.py
 mkdir -p fall17Data
 mv miniAOD_${SEED}.root fall17Data/.
 mv nanoAOD_${SEED}.root fall17Data/.
-mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_nanoAODproduction.sh.e${JOB_ID} fall17Data/.
-mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_nanoAODproduction.sh.o${JOB_ID} fall17Data/.
+mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_2017_nanoAODproduction.sh.e${JOB_ID} fall17Data/.
+mv /vols/cms/emc21/idmStudy/MCproduction/logging/qsub_2017_nanoAODproduction.sh.o${JOB_ID} fall17Data/.
 mv LHE-GEN_cfg_${JOB_ID}.py fall17Data/.
 mv PREMIX_cfg_${JOB_ID}.py fall17Data/.
 mv HLT_cfg_${JOB_ID}.py fall17Data/.
