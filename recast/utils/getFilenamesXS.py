@@ -8,6 +8,7 @@ files = {}
 for mH in range(200,1500,100):
     for mA in range(100, mH, 100):
         if (mA <= 500) and (mH != 1100) and (mH != 1300):
+            print(mH, mA)
             dataset = f"/Pseudoscalar2HDM_MonoZLL_mScan_mH-{mH}_ma-{mA}/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM"
             cmd = f"dasgoclient -query 'file dataset={dataset}'"
             status, out = subprocess.getstatusoutput(cmd)
@@ -15,9 +16,9 @@ for mH in range(200,1500,100):
             filenames = ["root://cmsxrootd.fnal.gov///store/test/xrootd/T1_ES_PIC" + file + ":Events;1" for file in filenames]
             files[f'mH{mH}_mA{mA}'] = filenames
 
-print(files)
-with open('2HDMa_files.pkl', 'wb') as fp:
-    pickle.dump(files, fp)
+#print(files)
+with open('2HDMa_files.json', 'w') as fp:
+    json.dump(files, fp, indent=4)
 
 # This gets the cross-sections of the IDM BPs
 def getNumfromString(line):
@@ -34,7 +35,7 @@ idm_on_shell = [8, 10, 12, 13, 14, 18, 19, 20, 21, 24]
 my_dict = {'BP' : ['xsec (pb)', 'error (pb)']}
 for BP in idm_on_shell:
     run_name = f'{process_name}_BP{BP}'
-    file = f'/eos/user/e/ecurtis/idmStudy/myFiles/gridpacks/{process_name}/{run_name}/{run_name}.log'
+    file = f'//vols/cms/emc21/idmStudy/myFiles/gridpacks/{process_name}_CMSSW_10_6_19/{run_name}/{run_name}.log'
     with open(file) as f:
         lines = f.readlines()
         for line in lines:
