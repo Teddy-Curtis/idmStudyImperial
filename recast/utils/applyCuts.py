@@ -18,6 +18,9 @@ def getDM(events, dm_pdgId):
 def getJets(events):
     branches = ['GenJet_eta', 'GenJet_hadronFlavour', 'GenJet_mass', 'GenJet_partonFlavour', 'GenJet_phi', 'GenJet_pt']
     jets = events[branches]
+    # Want to get rid of any jets that have a pdgId = 0
+    mask = jets.GenJet_partonFlavour != 0
+    jets = jets[mask]
     return jets
 
 def cutNleptons(events):
