@@ -1,9 +1,9 @@
 #!/bin/bash
-#$-q hep.q -l h_rt=1:0:0 -e /vols/cms/emc21/idmStudy/gridpack_batch/logging/ -o /vols/cms/emc21/idmStudy/gridpack_batch/logging/
+#$-q hep.q -l h_rt=6:0:0 -e /vols/cms/emc21/idmStudy/gridpack_batch/logging/ -o /vols/cms/emc21/idmStudy/gridpack_batch/logging/
 BPNUM=$1
 
 # define the process name here
-PROCESS="h2h2lPlMnunu_lem_nuemt"
+PROCESS="h2h2lPlMj_lem"
 echo "Making gridpack for process" $PROCESS "for BP" $BPNUM
 #CMSSW_version="CMSSW_10_6_27"
 #CMSSW_version="CMSSW_9_4_7"
