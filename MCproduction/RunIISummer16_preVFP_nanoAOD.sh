@@ -4,10 +4,10 @@ start=`date +%s`
 SEED=${JOB_ID}
 echo "The seed for this job is: " ${SEED}
 
-if (( "$#" != "5" ))
+if (( "$#" != "4" ))
     then
     echo $# $*
-    echo "Input parameter needed: <gridpack> <fragment> <nevts> <nthreads> <outpath>"
+    echo "Input parameter needed: <gridpack> <fragment> <nevts> <outpath>"
     echo "./RunIIFall17_nanoAOD.sh "
     exit
 fi
@@ -16,7 +16,6 @@ i=1
 GRIDPACK=${!i}; i=$((i+1))
 FRAGMENT=${!i}; i=$((i+1))
 NEVENTS=${!i}; i=$((i+1))
-NTHREADS=${!i}; i=$((i+1))
 OUTPATH=${!i}; i=$((i+1))
 
 SCRAM_ARCH=slc7_amd64_gcc700; export SCRAM_ARCH
@@ -75,7 +74,6 @@ cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
 --geometry DB:Extended \
 --era Run2_2016_HIPM \
 --no_exec \
---nThreads ${NTHREADS} \
 --mc \
 --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${SEED})" \
 -n $NEVENTS || exit $? ;
@@ -115,7 +113,6 @@ cmsDriver.py  --python_filename PREMIX_cfg_${SEED}.py \
 --geometry DB:Extended \
 --era Run2_2016_HIPM \
 --no_exec \
---nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
@@ -151,7 +148,6 @@ cmsDriver.py  --python_filename HLT_cfg_${SEED}.py \
 --no_exec \
 --outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" \
 --inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" \
---nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
@@ -184,7 +180,6 @@ cmsDriver.py  --python_filename AOD_cfg_${SEED}.py \
 --era Run2_2016_HIPM \
 --runUnscheduled \
 --no_exec \
---nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
@@ -219,7 +214,6 @@ cmsDriver.py  --python_filename miniAOD_cfg_${SEED}.py \
 --era Run2_2016_HIPM \
 --runUnscheduled \
 --no_exec \
---nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
@@ -250,7 +244,6 @@ cmsDriver.py  --python_filename nanoAOD_cfg_${SEED}.py \
 --step NANO \
 --era Run2_2016_HIPM,run2_nanoAOD_106Xv2 \
 --no_exec \
---nThreads ${NTHREADS} \
 --mc \
 -n $NEVENTS || exit $? ;
 
