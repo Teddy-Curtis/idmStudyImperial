@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import os 
 
 #BPs = [2]
-BPs = [2]
+BPs = [5]
 lams = [-1, 0, 1, 2]
 
 # This gets the cross-sections of the IDM BPs
@@ -42,9 +42,9 @@ def getVars(part, weights):
     dilep = lep1 + lep2
     cut = lep1['PID'] == -lep2['PID']
     mass = dilep.mass
-    mass_cut = mass < 80
+    mass_cut = mass < 40
     cut = cut & mass_cut
-    lead_pt_cut = lep1.pt >= 15
+    lead_pt_cut = lep1.pt >= 20
     sublead_pt_cut = lep2.pt >= 0
     pt_cut = lead_pt_cut & sublead_pt_cut
     cut = cut & pt_cut 
@@ -205,11 +205,11 @@ def plotDists(BPs, lams, procs, save_loc):
 
 
 # "lPlM_lPlMnunu_allLams_combined"
-plotDists(BPs, lams, ["h2h2lPlM"], "BP2_mass80_leadpt15_cut/lPlM_allLams")
+plotDists(BPs, lams, ["h2h2lPlM"], "BP5_mass40_leadpt20_cut/lPlM_allLams")
 
-plotDists(BPs, lams, ["h2h2lPlMnunu"], "BP2_mass80_leadpt15_cut/lPlMnunu_allLams")
+plotDists(BPs, lams, ["h2h2lPlMnunu"], "BP5_mass40_leadpt20_cut/lPlMnunu_allLams")
 
-plotDists(BPs, lams, ["h2h2lPlM", "h2h2lPlMnunu"], "BP2_mass80_leadpt15_cut/lPlM_lPlMnunu_allLams")
+plotDists(BPs, lams, ["h2h2lPlM", "h2h2lPlMnunu"], "BP5_mass40_leadpt20_cut/lPlM_lPlMnunu_allLams")
 
 
 

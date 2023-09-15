@@ -10,7 +10,7 @@ definitions = ['define l- = e- mu-', 'define l+ = e+ mu+', 'define vl = ve vm vt
 process = 'p p > h2 h2 l+ l- vl vl~'
 
 process_name = 'h2h2lPlMnunu'
-output_dir = f'/vols/cms/emc21/idmStudy/BPs/MadGraph_files/paramScan/BP2_lam345mHch_scan/{process_name}'
+output_dir = f'/vols/cms/emc21/idmStudy/BPs/MadGraph_files/paramScan/BP5_lam345mHch_scan/{process_name}'
 
 # Make the directory 
 try :
@@ -20,8 +20,9 @@ except:
 
 
 # Params in the form: MH, MA, MHPM, Lam2, Lam345, wh3, whP with wX being the width of the particle
-BP_params = [65, 71.525, 112.85, 0.779115, 0.0004, 8.33387e-09, 0.00027545884846]
-BP="BP2"
+#BP_params = [65, 71.525, 112.85, 0.779115, 0.0004, 8.33387e-09, 0.00027545884846]
+BP_params = [72.14, 109.548, 154.761, 0.0125664, -0.00234, 4.46479e-05, 0.0121323319543]
+BP="BP5"
 mA = BP_params[1]
 # I want to loop over different lam345 and different mHch
 splits = [1, 40, 80]

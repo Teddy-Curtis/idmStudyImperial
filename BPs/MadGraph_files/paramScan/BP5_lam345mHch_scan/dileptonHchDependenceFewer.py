@@ -12,8 +12,8 @@ import os
 import numpy as np
 
 # Params in the form: MH, MA, MHPM, Lam2, Lam345, wh3, whP with wX being the width of the particle
-BP_params = [65, 71.525, 112.85, 0.779115, 0.0004, 8.33387e-09, 0.00027545884846]
-BP="BP2"
+BP_params = [72.14, 109.548, 154.761, 0.0125664, -0.00234, 4.46479e-05, 0.0121323319543]
+BP="BP5"
 mA = BP_params[1]
 # I want to loop over different lam345 and different mHch
 mass_splits = [1, 40, 80]
@@ -30,7 +30,7 @@ def getNumfromString(line):
     return l[0], l[1]
 
 def getXS(proc, BP, split, lam):
-    file = f"{proc}/{proc}_BP2_mHch_split_{split}_lam345_{lam}/cross_section.txt"
+    file = f"{proc}/{proc}_BP5_mHch_split_{split}_lam345_{lam}/cross_section.txt"
     with open(file) as f:
         lines = f.readlines()
         for line in lines:
@@ -47,7 +47,7 @@ def getVars(part, weights):
     dilep = lep1 + lep2
     cut = lep1['PID'] == -lep2['PID']
     mass = dilep.mass
-    mass_cut = mass < 10
+    mass_cut = mass < 40
     cut = cut & mass_cut
     # lead_pt_cut = lep1.pt >= 14
     # sublead_pt_cut = lep2.pt >= 14
@@ -126,7 +126,7 @@ def plotDists(BP_params, lams, mass_splits, procs, save_loc):
             vars_all = {"mass" : [], "dR" : [], "leadpt" : [], "MET" : []}
             weights_all = []
             xs = 0
-            filenames = [f"{proc}/{proc}_BP2_mHch_split_{split}_lam345_{lam}/Events/run_01/unweighted_events.root:LHEF;1" for proc in procs]
+            filenames = [f"{proc}/{proc}_BP5_mHch_split_{split}_lam345_{lam}/Events/run_01/unweighted_events.root:LHEF;1" for proc in procs]
             for filename, proc in zip(filenames,procs):
                 try:
                     with uproot.open(filename) as f:
@@ -231,11 +231,11 @@ def plotDists(BP_params, lams, mass_splits, procs, save_loc):
 
 
 # # "lPlM_lPlMnunu_allmHch_combined"
-plotDists(BP_params, lams, mass_splits, ["h2h2lPlM"], "mH10_cut/lPlM_allmHch_all_lam")
+plotDists(BP_params, lams, mass_splits, ["h2h2lPlM"], "mass_40_cut/lPlM_allmHch_all_lam")
 
-plotDists(BP_params, lams, mass_splits, ["h2h2lPlMnunu"], "mH10_cut/lPlMnunu_allmHch_all_lam")
+plotDists(BP_params, lams, mass_splits, ["h2h2lPlMnunu"], "mass_40_cut/lPlMnunu_allmHch_all_lam")
 
-plotDists(BP_params, lams, mass_splits, ["h2h2lPlM", "h2h2lPlMnunu"], "mH10_cut/lPlM_lPlMnunu_allmHch_all_lam")
+plotDists(BP_params, lams, mass_splits, ["h2h2lPlM", "h2h2lPlMnunu"], "mass_40_cut/lPlM_lPlMnunu_allmHch_all_lam")
 
 
 
