@@ -2,40 +2,37 @@
 # This file creates all of the gridpacks, then sends them over the the myFiles
 # directory on EOS
 # Name of the process:
-tag = h2h2lPlM
+tag=h2h2lPlM
 scram_version=slc7_amd64_gcc700
-CMSSW_version=CMSSW_10_6_19
-run_name=$(tag)_BP$(item)
+CMSSW_version=CMSSW_10_6_28_patch1
+run_name=$(tag)_mH$(mH)_mA$(mA)_mHch$(mHch)
 NEVENTS=500
-OUTPATH=root://eosuser.cern.ch//eos/user/e/ecurtis/idmStudyImperial/myFiles/gridpacks/$(tag)/$(run_name)
+OUTPATH=root://eosuser.cern.ch//eos/user/e/ecurtis/idmFilesEOS/gridpacks/$(tag)_parameterscan_updatedWidths_mH$(mH)_$(CMSSW_version)/$(run_name)
 
 # arguments 
-GRIDPACK=root://eosuser.cern.ch//eos/user/e/ecurtis/idmStudyImperial/myFiles/gridpacks/$(tag)/$(run_name)/$(run_name)_$(scram_version)_$(CMSSW_version)_tarball.tar.xz
-FRAGMENT=root://eosuser.cern.ch//eos/user/e/ecurtis/idmStudyImperial/MCproduction/fragments/iDM/general_config.py
-Proxy_path = /afs/cern.ch/user/e/ecurtis/cms.proxy
+GRIDPACK=root://eosuser.cern.ch//eos/user/e/ecurtis/idmFilesEOS/gridpacks/$(tag)_parameterscan_updatedWidths_mH$(mH)_$(CMSSW_version)/$(run_name)/$(run_name)_$(scram_version)_$(CMSSW_version)_tarball.tar.xz
+FRAGMENT=/afs/cern.ch/user/e/ecurtis/idmStudyImperial/MCproduction/fragments/iDM/central_production_config.py
+Proxy_path=/afs/cern.ch/user/e/ecurtis/cms.proxy
 
 #! CHANGE THIS DEPENDING ON WHAT YEAR YOU ARE CREATING MC FOR!!!
-Executable = condor_RunIIFall17_nanAOD.sh
+Executable=/afs/cern.ch/user/e/ecurtis/idmStudyImperial/MCproduction/RunIIFall17_nanoAOD_condor_central.sh
 
 # have to do logging on afs
-home=/afs/cern.ch/user/e/ecurtis/idmStudy/MCproduction
-output = $(home)/logging/$(tag)_$(ClusterId)_$(item).out
-error = $(home)/logging/$(tag)_$(ClusterId)_$(item).err
-log = $(home)/logging/$(tag)_$(ClusterId)_$(item).log
+home=/afs/cern.ch/user/e/ecurtis/idmStudyImperial
+output = $(home)/logging/$(tag)_$(run_name)_$(ClusterId).out
+error = $(home)/logging/$(tag)_$(run_name)_$(ClusterId).err
+#log = $(home)/logging/$(tag)_$(run_name)_$(ClusterId).log
 
 
-arguments = $(Proxy_path) $(GRIDPACK) $(FRAGMENT) $(NEVENTS) $(OUTPATH) $(ClusterId) $(item)
+arguments = $(Proxy_path) $(GRIDPACK) $(FRAGMENT) $(NEVENTS) $(OUTPATH)
 
-#Transfer_Input_Files = $(GRIDPACK) $(FRAGMENT)
-#Transfer_Input_Files = /afs/cern.ch/user/e/ecurtis/cms.proxy 
 
-#Transfer_Input_Files = /afs/cern.ch/user/e/ecurtis/idmStudy/MCproduction/pulist_Fall17.txt
-#should_transfer_files = NO
 Transfer_Output_Files = ""
-# when_to_transfer_output = ON_EXIT
 Universe = vanilla
-+JobFlavour = "testmatch"
+#+JobFlavour = "microcentury"
++MaxRuntime=36000
 
-queue 20 in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
-#queue from seq 1 20 |
+# for i in {1..100}; do condor_submit condor_production.sh; done
 
+#! CHANGE THIS DEPENDING ON THE MASS OF H!!!
+queue mH, mA, mHch from /afs/cern.ch/user/e/ecurtis/idmStudyImperial/MCproduction/genproductions/bin/MadGraph5_aMCatNLO/cards/iDMParameterScanUpdatedWidths/mH80/input_arguments.txt
