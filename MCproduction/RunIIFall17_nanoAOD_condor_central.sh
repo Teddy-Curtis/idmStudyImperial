@@ -1,7 +1,7 @@
 #!/bin/bash
 start=`date +%s`
 
-if (( "$#" != "5" ))
+if (( "$#" != "6" ))
     then
     echo $# $*
     echo "Input parameter needed: <proxy> <gridpack> <fragment> <nevts> <outpath>"
@@ -15,6 +15,7 @@ GRIDPACK=${!i}; i=$((i+1))
 FRAGMENT=${!i}; i=$((i+1))
 NEVENTS=${!i}; i=$((i+1))
 OUTPATH=${!i}; i=$((i+1))
+run_name=${!i}; i=$((i+1))
 
 
 SEED=$(((RANDOM<<15)|RANDOM))
@@ -245,7 +246,7 @@ cmsRun nanoAOD_cfg_${SEED}.py
 
 # Copy files over
 mkdir -p ${OUTPATH}/Data/Fall2017Data
-xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/Fall2017Data/nanoAOD_${SEED}.root
+xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/Fall2017Data/${run_name}_Fall2017Data_nanoAOD_${SEED}.root
 
 
 end=`date +%s`
