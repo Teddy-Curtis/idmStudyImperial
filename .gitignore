@@ -23,6 +23,7 @@ HiggsDNA
 HiggsDNA2
 higgsInvsPaper
 BPs/MadGraph_files/paramScan/**/h2h2*
+pNN
 
 # And these files
 Delphes-3.5.0.tar.gz
