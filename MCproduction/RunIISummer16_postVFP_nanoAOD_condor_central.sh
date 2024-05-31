@@ -5,7 +5,7 @@ if (( "$#" != "6" ))
     then
     echo $# $*
     echo "Input parameter needed: <proxy> <gridpack> <fragment> <nevts> <outpath>"
-    echo "./RunIIFall17_nanoAOD.sh "
+    echo "./RunIISummer16_postVFP_nanoAOD.sh "
     exit
 fi
 
@@ -31,7 +31,7 @@ WORKING_DIR=`pwd`
 
 xrdcp ${GRIDPACK} .
 xrdcp ${FRAGMENT} .
-xrdcp /afs/cern.ch/user/e/ecurtis/idmStudyImperial/MCproduction/PU_lists/pulist_Fall17.txt .
+xrdcp /afs/cern.ch/user/e/ecurtis/idmStudyImperial/MCproduction/PU_lists/pulist_16.txt .
 
 GRIDPACK="${WORKING_DIR}/$(basename -- $GRIDPACK)"
 FRAGMENT="${WORKING_DIR}/$(basename -- $FRAGMENT)"
@@ -78,11 +78,11 @@ cmsDriver.py Configuration/GenProduction/python/$(basename $FRAGMENT) \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier GEN,LHE \
 --fileout file:LHE-GEN_${SEED}.root \
---conditions 106X_mc2017_realistic_v6 \
---beamspot Realistic25ns13TeVEarly2017Collision \
+--conditions 106X_mcRun2_asymptotic_v13 \
+--beamspot Realistic25ns13TeV2016Collision \
 --step LHE,GEN \
 --geometry DB:Extended \
---era Run2_2017 \
+--era Run2_2016 \
 --no_exec \
 --mc \
 --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${SEED})" \
@@ -106,7 +106,7 @@ scram b
 cd $WORKING_DIR
 
 echo "Choose random PU input file."
-PULIST=($(cat pulist_Fall17.txt))
+PULIST=($(cat pulist_16.txt))
 PUFILE=${PULIST[$RANDOM % ${#PULIST[@]}]}
 echo "Chose PU File: ${PUFILE}"
 
@@ -115,15 +115,14 @@ cmsDriver.py  --python_filename PREMIX_cfg_${SEED}.py \
 --fileout file:PREMIX_${SEED}.root \
 --step SIM,DIGI,DATAMIX,L1,DIGI2RAW \
 --eventcontent PREMIXRAW \
---conditions 106X_mc2017_realistic_v6 \
+--conditions 106X_mcRun2_asymptotic_v13 \
 --runUnscheduled \
---beamspot Realistic25ns13TeVEarly2017Collision \
---customise_commands 'process.PREMIXRAWoutput.outputCommands.append("drop *_g4SimHits_*_*")' \
+--beamspot Realistic25ns13TeV2016Collision \
 --pileup_input "$PUFILE" \
 --procModifiers premix_stage2 \
 --datamix PreMix \
 --geometry DB:Extended \
---era Run2_2017 \
+--era Run2_2016 \
 --no_exec \
 --mc \
 -n $NEVENTS || exit $? ;
@@ -135,8 +134,8 @@ rm LHE-GEN_${SEED}.root
 rm LHE-GEN_${SEED}_inLHE.root
 # # --------------------------------------------PREMIX+HLT data------------------------------------------------------
 
-cmsrel CMSSW_9_4_14_UL_patch1
-cd CMSSW_9_4_14_UL_patch1/src
+cmsrel CMSSW_8_0_33_UL
+cd CMSSW_8_0_33_UL/src
 eval `scram runtime -sh`
 scram b
 cd $WORKING_DIR
@@ -145,13 +144,15 @@ cmsDriver.py  --python_filename HLT_cfg_${SEED}.py \
 --filein file:PREMIX_${SEED}.root \
 --fileout file:HLT_${SEED}.root \
 --eventcontent RAWSIM \
+--outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier GEN-SIM-RAW \
---conditions 94X_mc2017_realistic_v15 \
+--inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" \
+--conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 \
 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' \
---step HLT:2e34v40 \
+--step HLT:25ns15e33_v4 \
 --geometry DB:Extended \
---era Run2_2017 \
+--era Run2_2016 \
 --no_exec \
 --mc \
 -n $NEVENTS || exit $? ;
@@ -174,10 +175,10 @@ cmsDriver.py  --python_filename AOD_cfg_${SEED}.py \
 --eventcontent AODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier AODSIM \
---conditions 106X_mc2017_realistic_v6 \
+--conditions 106X_mcRun2_asymptotic_v13 \
 --step RAW2DIGI,L1Reco,RECO,RECOSIM \
 --geometry DB:Extended \
---era Run2_2017 \
+--era Run2_2016 \
 --runUnscheduled \
 --no_exec \
 --mc \
@@ -191,8 +192,8 @@ rm -rf CMSSW_10_6_17_patch1
 # # --------------------------------------------miniAOD------------------------------------------------------
 
 
-cmsrel CMSSW_10_6_20
-cd CMSSW_10_6_20/src
+cmsrel CMSSW_10_6_25
+cd CMSSW_10_6_25/src
 eval `scram runtime -sh`
 scram b
 cd $WORKING_DIR
@@ -204,11 +205,11 @@ cmsDriver.py  --python_filename miniAOD_cfg_${SEED}.py \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier MINIAODSIM \
 --fileout file:miniAOD_${SEED}.root \
---conditions 106X_mc2017_realistic_v9 \
+--conditions 106X_mcRun2_asymptotic_v17 \
 --step PAT \
 --procModifiers run2_miniAOD_UL \
 --geometry DB:Extended \
---era Run2_2017 \
+--era Run2_2016 \
 --runUnscheduled \
 --no_exec \
 --mc \
@@ -218,7 +219,7 @@ cmsRun miniAOD_cfg_${SEED}.py
 
 # Now that I've used AOD I can get rid of that file
 rm AOD_${SEED}.root
-rm -rf CMSSW_10_6_20
+rm -rf CMSSW_10_6_25
 
 # # --------------------------------------------nanoAOD------------------------------------------------------
 
@@ -235,9 +236,9 @@ cmsDriver.py  --python_filename nanoAOD_cfg_${SEED}.py \
 --eventcontent NANOAODSIM \
 --customise Configuration/DataProcessing/Utils.addMonitoring \
 --datatier NANOAODSIM \
---conditions 106X_mc2017_realistic_v9 \
+--conditions 106X_mcRun2_asymptotic_v17 \
 --step NANO \
---era Run2_2017,run2_nanoAOD_106Xv2 \
+--era Run2_2016,run2_nanoAOD_106Xv2 \
 --no_exec \
 --mc \
 -n $NEVENTS || exit $? ;
@@ -245,8 +246,8 @@ cmsDriver.py  --python_filename nanoAOD_cfg_${SEED}.py \
 cmsRun nanoAOD_cfg_${SEED}.py 
 
 # Copy files over
-mkdir -p ${OUTPATH}/Data/Fall2017Data
-xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/Fall2017Data/${run_name}_Fall2017Data_nanoAOD_${SEED}.root
+mkdir -p ${OUTPATH}/Data/Summer16_postVFPData
+xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/Summer16_postVFPData/${run_name}_Summer16_postVFPData_nanoAOD_${SEED}.root
 
 
 end=`date +%s`
