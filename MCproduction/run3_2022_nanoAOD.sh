@@ -287,8 +287,8 @@ echo "ls"
 ls
 
 # Copy files over
-mkdir -p ${OUTPATH}/Data/Autumn2018Data
-xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/Autumn2018Data/${run_name}_Autumn2018Data_nanoAOD_${SEED}.root
+mkdir -p ${OUTPATH}/Data/2022_preEE
+xrdcp nanoAOD_${SEED}.root ${OUTPATH}/Data/2022_preEE/${run_name}_2022_preEE_nanoAOD_${SEED}.root
 
 
 end=`date +%s`
